@@ -4,6 +4,7 @@ from blueprints.notes.notes import notes_bp
 from blueprints.auth.auth import auth_bp
 from blueprints.users.users import users_bp
 from blueprints.notesubs.notesubs import notesubs_bp
+from blueprints.rssfeeds.rss import rss_bp
 
 
 app = Flask(__name__)
@@ -13,6 +14,7 @@ app.register_blueprint(notes_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(users_bp)
 app.register_blueprint(notesubs_bp)
+app.register_blueprint(rss_bp)
 
 
 
