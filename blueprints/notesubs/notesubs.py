@@ -10,7 +10,6 @@ notesubs_bp = Blueprint("notesubs_bp", __name__)
 notes = globals.db.note
 
 @notesubs_bp.route("/api/v1.0/notes/<string:id>/notesubs", methods=["POST"])
-#@jwt_required - commented out for now!!
 def add_new_notesub(id): 
     new_notesub = {
         '_id' : ObjectId(),
@@ -69,8 +68,6 @@ def edit_notesub(b_id, n_id):
 
 
 @notesubs_bp.route("/api/v1.0/notes/<string:b_id>/notesubs/<string:n_id>", methods=["DELETE"])
-#@jwt_required
-#@admin_required
 def delete_notesub(b_id, n_id):
     if len(n_id) != 24 or not all(c in string.hexdigits for c in n_id):
         return make_response( jsonify( { "Error" : "Invalid Note ID"} ), 404 )
