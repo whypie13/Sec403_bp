@@ -11,6 +11,24 @@ auth_bp = Blueprint("auth_bp", __name__)
 blacklist = globals.db.blacklist 
 users = globals.db.users
 
+@auth_bp.route("/register", methods=["POST"])
+def register():
+    data = request.get_json()
+    users = globals.db.users
+
+    if users.find_one({"username": data["username"]}) or users.find_one({"email": data["email"]}):
+        return jsonify({"message": "Username or Email already exists"}), 400
+
+    hashed_password = bcrypt.generate_password_hash(data["password"]).decode("utf-8")
+    new_user = {
+        "username": data["username"],
+        "email": data["email"],
+        "password": hashed_password,
+    }
+
+    users.insert_one(new_user)
+    return jsonify({"message": "User registered successfully"}), 201
+
 
 @auth_bp.route("/api/v1.0/login", methods=["GET"])
 def login():

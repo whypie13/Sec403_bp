@@ -6,6 +6,8 @@ from blueprints.users.users import users_bp
 from blueprints.notesubs.notesubs import notesubs_bp
 from blueprints.rssfeeds.rss import rss_bp 
 from blueprints.apilist.api import api_bp
+from blueprints.rssfeeds.rss2 import rss2_bp
+from blueprints.rssfeeds.rss3 import rss3_bp
 
 
 
@@ -18,6 +20,8 @@ app.register_blueprint(users_bp)
 app.register_blueprint(notesubs_bp)
 app.register_blueprint(rss_bp)
 app.register_blueprint(api_bp)
+app.register_blueprint(rss2_bp)
+app.register_blueprint(rss3_bp)
 
 
 
