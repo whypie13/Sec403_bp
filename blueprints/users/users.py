@@ -63,8 +63,6 @@ def add_user():
     
 
 @users_bp.route("/api/v1.0/users/<string:id>", methods=["DELETE"])
-@jwt_required
-@admin_required
 def delete_user(id):
     if len(id) != 24 or not all(c in string.hexdigits for c in id):
         return make_response( jsonify( { "Error" : "Invalid User ID"} ), 404 )

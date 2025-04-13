@@ -20,10 +20,12 @@ def show_all_notes():
     data_return = []
     for note in notes.find().skip(page_start).limit(page_size):
         note['_id'] = str(note['_id'])
-        for notesub in note['notesubs']:
-            notesub['_id'] = str(notesub['_id'])
+        if 'notesubs' in note and isinstance(note['notesubs'], list):
+            for notesub in note['notesubs']:
+                notesub['_id'] = str(notesub['_id'])
+        else:
+            note['notesubs'] = []
         data_return.append(note)
-
     return make_response( jsonify( data_return ), 200 )
 
 
@@ -33,10 +35,17 @@ def show_one_note(id):
         return make_response( jsonify( { "Error" : "Invalid note ID"} ), 404 )
     note = notes.find_one( { '_id' : ObjectId(id)} )
     if note is not None:
-        note['_id'] = str( note['_id'] )
-        for notesub in note['notesubs']:
-            notesub['_id'] = str(notesub['_id'])
-        return make_response( jsonify( note ), 200 )
+        note['_id'] = str(note['_id'])  # Convert main _id
+
+        # Convert each notesub _id if notesubs exist
+        if 'notesubs' in note and isinstance(note['notesubs'], list):
+            for notesub in note['notesubs']:
+                notesub['_id'] = str(notesub['_id'])
+        else:
+            note['notesubs'] = []  # Ensure it's always a list
+
+        return make_response(jsonify(note), 200)
+
     else: 
         return make_response( jsonify( { "Error" : "Invalid note ID"} ), 404 )
     

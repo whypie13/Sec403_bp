@@ -30,9 +30,10 @@ def add_new_notesub(id):
 def fetch_all_notesubs(id): 
     data_to_return = []
     note = notes.find_one( {"_id" : ObjectId(id) }, {"notesubs" : 1, "_id" : 0 } )
-    for notesub in note['notesubs']:
-        notesub['_id'] = str( notesub['_id'] )
-        data_to_return.append(notesub)
+    if note and 'notesubs' in note and isinstance(note['notesubs'], list):
+        for notesub in note['notesubs']:
+            notesub['_id'] = str(notesub['_id'])
+            data_to_return.append(notesub)
     return make_response( jsonify( data_to_return), 200)
 
 
