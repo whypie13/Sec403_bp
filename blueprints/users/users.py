@@ -1,5 +1,6 @@
 from flask import Blueprint, request, make_response, jsonify
 from decorators import jwt_required, admin_required
+from werkzeug.security import generate_password_hash
 import globals
 import string
 from bson import ObjectId 
@@ -45,21 +46,25 @@ def show_one_user(id):
         return make_response( jsonify( { "Error" : "Invalid User ID"} ), 404 )
 
 
-@users_bp.route("/api/v1.0/users", methods=["POST"])
-def add_user(): 
-    if 'name' in request.form and 'username' in request.form and 'password' in request.form and 'email' in request.form and 'admin' in request.form:
-        new_user = {
-            'name' : request.form['name'],
-            'username' : request.form['username'],
-            'password' : request.form['password'],
-            'email' : request.form['email'],
-            'admin' : request.form['admin']
+@users_bp.route("/api/v1.0/register", methods=["POST"])
+def register_user(): 
+    data = request.get_json()
+
+    if users.find_one({"username": data["username"]}) or users.find_one({"email": data["email"]}):
+        return jsonify({"message": "Username or Email already exists"}), 409
+    
+    hashed_password = generate_password_hash(data["password"])
+
+    new_user = {
+            'name' : data['name'],
+            'username' : data['username'],
+            'password' : hashed_password,
+            'email' : data['email']
         }
-        new_user_id = users.insert_one( new_user)
-        new_user_profile = "http://127.0.0.1:5000/api/v1.0/users/" + str( new_user_id.inserted_id)
-        return make_response( jsonify( { "url" : new_user_profile } ), 201)
-    else:
-        return make_response( jsonify( { "Error" : "Missing Form Data"} ), 404 )
+    
+    new_user_id = users.insert_one( new_user)
+    new_user_profile = "http://127.0.0.1:5000/api/v1.0/users/" + str( new_user_id.inserted_id)
+    return make_response( jsonify( { "User registered successfully" : new_user_profile } ), 201)
     
 
 @users_bp.route("/api/v1.0/users/<string:id>", methods=["DELETE"])

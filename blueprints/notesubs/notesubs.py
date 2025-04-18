@@ -11,18 +11,21 @@ notes = globals.db.note
 
 @notesubs_bp.route("/api/v1.0/notes/<string:id>/notesubs", methods=["POST"])
 def add_new_notesub(id): 
-    new_notesub = {
-        '_id' : ObjectId(),
-        'username' : request.form['username'],
-        'comment' : request.form['comment'], 
-        'riskscore' : request.form['riskscore'],
-        'source' : request.form['source']
-    }
-    notes.update_one( { "_id" : ObjectId(id) }, {
-        "$push" : { "notesubs" : new_notesub }
-    })
-    new_notesub_link = "http://127.0.0.1:5000/api/v1.0/notes/" + id + "/notesubs/" + str( new_notesub['_id'] )
-    return make_response( jsonify( { "url" : new_notesub_link} ), 201) 
+    if 'username' in request.form and 'comment' in request.form and 'riskscore' in request.form and 'source' in request.form:
+        new_notesub = {
+            '_id' : ObjectId(),
+            'username' : request.form['username'],
+            'comment' : request.form['comment'], 
+            'riskscore' : request.form['riskscore'],
+            'source' : request.form['source']
+        }
+        notes.update_one( { "_id" : ObjectId(id) }, {
+            "$push" : { "notesubs" : new_notesub }
+        })
+        new_notesub_link = "http://127.0.0.1:5000/api/v1.0/notes/" + id + "/notesubs/" + str( new_notesub['_id'] )
+        return make_response( jsonify( { "url" : new_notesub_link} ), 201) 
+    else:
+        return make_response( jsonify( { "Error" : "Missing Form Data"} ), 404 )
 
 
 
