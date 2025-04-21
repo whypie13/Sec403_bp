@@ -1,5 +1,5 @@
 from flask import Blueprint, request, make_response, jsonify 
-from decorators import jwt_required, admin_required 
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from bson import ObjectId
 import globals 
 import string
@@ -65,7 +65,6 @@ def add_note():
 
 
 @notes_bp.route("/api/v1.0/notes/<string:id>", methods=["PUT"])
-@jwt_required
 def edit_note(id):
     if 'title' in request.form and 'category' in request.form:
         result = notes.update_one( { '_id' : ObjectId(id) }, {
@@ -84,8 +83,7 @@ def edit_note(id):
 
 
 @notes_bp.route("/api/v1.0/notes/<string:id>", methods=["DELETE"])
-@jwt_required
-@admin_required
+@jwt_required()
 def delete_note(id):
     if len(id) != 24 or not all(c in string.hexdigits for c in id):
         return make_response( jsonify( { "Error" : "Invalid note ID"} ), 404 )

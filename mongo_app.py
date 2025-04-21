@@ -1,4 +1,6 @@
+import datetime
 from flask import Flask, jsonify
+from flask_jwt_extended import JWTManager
 from flask_cors import CORS, cross_origin
 from blueprints.notes.notes import notes_bp
 from blueprints.auth.auth import auth_bp
@@ -12,7 +14,12 @@ from blueprints.rssfeeds.rss3 import rss3_bp
 
 
 app = Flask(__name__)
-CORS(app)
+app.config['SECRET_KEY'] = 'your-secret-key'
+app.config['JWT_TOKEN_LOCATION'] = ['headers']
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(minutes=30)
+jwt = JWTManager(app)
+CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
+
 
 app.register_blueprint(notes_bp)
 app.register_blueprint(auth_bp)

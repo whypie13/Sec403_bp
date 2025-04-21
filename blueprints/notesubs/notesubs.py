@@ -1,5 +1,5 @@
 from flask import Blueprint, request, make_response, jsonify
-from decorators import jwt_required, admin_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from bson import ObjectId 
 import globals 
 import string
@@ -54,7 +54,7 @@ def fetch_one_notesub(b_id, n_id):
 
 
 @notesubs_bp.route("/api/v1.0/notes/<string:b_id>/notesubs/<string:r_id>", methods=["PUT"])
-@jwt_required
+@jwt_required()
 def edit_notesub(b_id, n_id):
     altered_notesub = {
         "notesubs.$.username" : request.form['username'],
