@@ -25,13 +25,13 @@ def login():
         return jsonify({ 'message': 'Invalid username or password' }), 401
 
     access_token = create_access_token(
-        identity={
-            "username": user['username'],
+        identity=user['username'],  
+        expires_delta=datetime.timedelta(minutes=30),
+        additional_claims={     
             "admin": user.get('admin', False),
             "email": user.get('email'),
             "name": user.get('name')
-        },
-        expires_delta=datetime.timedelta(minutes=30)
+        }
     )
 
     return jsonify({ "token": access_token }), 200

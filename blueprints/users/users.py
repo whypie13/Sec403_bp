@@ -65,29 +65,20 @@ def register_user():
     return make_response( jsonify( { "User registered successfully" : new_user_profile } ), 201)
     
 
-@users_bp.route("/api/v1.0/users/profile", methods=["GET"])
-@jwt_required()
-def user_profile():
-    username = get_jwt_identity() 
-    user = users.find_one({"username": username})
-
-    if user:
-        return jsonify({
-            "name": user.get("name"),
-            "username": user.get("username"),
-            "email": user.get("email")
-        }), 200
-    else:
-        return jsonify({"message": "User not found"}), 404
-
-
 @users_bp.route("/api/v1.0/users/<string:id>", methods=["DELETE"])
 @jwt_required()
 def delete_user(id):
+    current_user = get_jwt_identity()
+    
+    if current_user != id:
+        return make_response(jsonify({"Error": "You are not authorized to delete this account"}), 403)
+
     if len(id) != 24 or not all(c in string.hexdigits for c in id):
-        return make_response( jsonify( { "Error" : "Invalid User ID"} ), 404 )
-    result = users.delete_one( { "_id" : ObjectId(id) } )
+        return make_response(jsonify({"Error": "Invalid User ID"}), 404)
+
+    result = users.delete_one({"_id": ObjectId(id)})
+    
     if result.deleted_count == 1:
-        return make_response( jsonify( {} ), 200)
+        return make_response(jsonify({}), 200)
     else:
-        return make_response( jsonify( { "Error" : "Invalid User ID"} ), 404 )
+        return make_response(jsonify({"Error": "Invalid User ID"}), 404)
