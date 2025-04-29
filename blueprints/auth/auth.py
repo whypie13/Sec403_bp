@@ -40,6 +40,6 @@ def login():
 @auth_bp.route("/api/v1.0/logout", methods=["POST"])
 @jwt_required()
 def logout():
-    jti = get_jwt()["jti"]  # unique identifier for JWT
+    jti = get_jwt()["jti"]  
     blacklist.insert_one({ "jti": jti })
     return jsonify({ "message": "Logout successful" }), 200

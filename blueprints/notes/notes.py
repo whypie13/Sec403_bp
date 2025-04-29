@@ -35,14 +35,14 @@ def show_one_note(id):
         return make_response( jsonify( { "Error" : "Invalid note ID"} ), 404 )
     note = notes.find_one( { '_id' : ObjectId(id)} )
     if note is not None:
-        note['_id'] = str(note['_id'])  # Convert main _id
+        note['_id'] = str(note['_id'])  
 
-        # Convert each notesub _id if notesubs exist
+       
         if 'notesubs' in note and isinstance(note['notesubs'], list):
             for notesub in note['notesubs']:
                 notesub['_id'] = str(notesub['_id'])
         else:
-            note['notesubs'] = []  # Ensure it's always a list
+            note['notesubs'] = [] 
 
         return make_response(jsonify(note), 200)
 
